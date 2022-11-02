@@ -14,7 +14,7 @@ namespace GameOfLife
         private int SizeY;
         private Cell[,] cells;
         private Cell[,] nextGenerationCells;
-        private static Random rnd;
+        private static Random rnd = new Random();
         private Canvas drawCanvas;
         private Ellipse[,] cellsVisuals;
 
@@ -22,7 +22,6 @@ namespace GameOfLife
         public Grid(Canvas c)
         {
             drawCanvas = c;
-            rnd = new Random();
             SizeX = (int) (c.Width / 5);
             SizeY = (int)(c.Height / 5);
             cells = new Cell[SizeX, SizeY];
@@ -48,8 +47,8 @@ namespace GameOfLife
             for (int i = 0; i < SizeX; i++)
                 for (int j = 0; j < SizeY; j++)
                 {
-                    cells[i, j] = new Cell(i, j, 0, false);
-                    nextGenerationCells[i, j] = new Cell(i, j, 0, false);
+                    cells[i, j].Clear();
+                    nextGenerationCells[i, j].Clear();
                     cellsVisuals[i, j].Fill = Brushes.Gray;
                 }
         }

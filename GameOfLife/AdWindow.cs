@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -12,11 +13,19 @@ namespace GameOfLife
         private readonly DispatcherTimer adTimer;
         private int imgNmb;     // the number of the image currently shown
         private string link;    // the URL where the currently shown ad leads to
-        
-    
+        Random rnd = new Random();
+        private ImageBrush myBrush = new ImageBrush();
+        private Dictionary<int, BitmapImage> store = new Dictionary<int, BitmapImage>
+        {
+
+            {1, new BitmapImage(new Uri("ad1.jpg", UriKind.Relative))},
+            {2, new BitmapImage(new Uri("ad2.jpg", UriKind.Relative))},
+            {3, new BitmapImage(new Uri("ad3.jpg", UriKind.Relative))},
+        };
+
+
         public AdWindow(Window owner)
         {
-            Random rnd = new Random();
             Owner = owner;
             Width = 350;
             Height = 100;
@@ -26,13 +35,15 @@ namespace GameOfLife
             Cursor = Cursors.Hand;
             ShowActivated = false;
             MouseDown += OnClick;
-            
+
             imgNmb = rnd.Next(1, 3);
             ChangeAds(this, new EventArgs());
 
             // Run the timer that changes the ad's image 
-            adTimer = new DispatcherTimer();
-            adTimer.Interval = TimeSpan.FromSeconds(3);
+            adTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(3)
+            };
             adTimer.Tick += ChangeAds;
             adTimer.Start();
         }
@@ -42,48 +53,39 @@ namespace GameOfLife
             System.Diagnostics.Process.Start(link);
             Close();
         }
-        
+
         protected override void OnClosed(EventArgs e)
         {
-            //Unsubscribe();
+            Unsubscribe();
             base.OnClosed(e);
-        } 
+        }
 
         public void Unsubscribe()
         {
             adTimer.Tick -= ChangeAds;
+            adTimer.Stop();
         }
 
         private void ChangeAds(object sender, EventArgs eventArgs)
         {
-            
-            ImageBrush myBrush = new ImageBrush();
-            
+            var imageSource = store[imgNmb];
+            myBrush.ImageSource = imageSource;
+            Background = myBrush;
+            link = "http://example.com";
+
             switch (imgNmb)
             {
                 case 1:
-                    myBrush.ImageSource =
-                        new BitmapImage(new Uri("ad1.jpg", UriKind.Relative));
-                    Background = myBrush;
-                    link = "http://example.com";
+                  
                     imgNmb++;
                     break;
                 case 2:
-                    myBrush.ImageSource =
-                        new BitmapImage(new Uri("ad2.jpg", UriKind.Relative));
-                    Background = myBrush;
-                    link = "http://example.com";
                     imgNmb++;
                     break;
                 case 3:
-                    myBrush.ImageSource =
-                        new BitmapImage(new Uri("ad3.jpg", UriKind.Relative));
-                    Background = myBrush;
-                    link = "http://example.com";
                     imgNmb = 1;
                     break;
             }
-            
         }
     }
 }

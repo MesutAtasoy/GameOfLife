@@ -19,7 +19,12 @@ namespace GameOfLife
             PositionY = column * 5;
             Age = age;
             IsAlive = alive;
-            
+        }
+
+        public void Clear()
+        {
+            Age = 0;
+            IsAlive = false;
         }
     }
 }
